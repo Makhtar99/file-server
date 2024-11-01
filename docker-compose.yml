@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./src:/app/src
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_USER=fileserver
+      - DB_PASSWORD=fileserver
+      - DB_NAME=fileserver
+      - JWT_SECRET=your-secret
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=fileserver
+      - POSTGRES_PASSWORD=fileserver
+      - POSTGRES_DB=fileserver
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
